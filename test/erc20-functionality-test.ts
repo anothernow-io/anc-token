@@ -1,15 +1,18 @@
-const { expect } = require("chai")
+
+import { ethers } from "hardhat"
+import { expect } from "chai"
+import { Contract, Signer } from 'ethers'
 
 const DECIMALS = 9
 const INITIAL_SUPPLY = ethers.utils.parseUnits('50', 6 + DECIMALS)
 
 describe("ANCToken:ERC20", () => {
   
-  let ANCToken, anctoken, owner, addr1, addr2
+  let anctoken: Contract, owner: Signer, addr1: Signer, addr2: Signer
 
-  beforeEach(async () => {
+  before(async () => {
     [owner, addr1, addr2] = await ethers.getSigners()
-    ANCToken = await ethers.getContractFactory("ANCToken")
+    const ANCToken = await ethers.getContractFactory("ANCToken")
     anctoken = await ANCToken.deploy(INITIAL_SUPPLY)
   })
 
@@ -18,16 +21,16 @@ describe("ANCToken:ERC20", () => {
   })
 
   it('owner', async () => {
-    expect(await anctoken.owner()).to.eq(owner.address)
+    expect(await anctoken.owner()).to.eq(await owner.getAddress())
   })
 
   describe('balanceOf', () => {
     it('when sender account has no tokens', async () => {
-      expect(await anctoken.balanceOf(addr1.address)).to.eq(0)
+      expect(await anctoken.balanceOf(addr1.getAddress())).to.eq(0)
     })
 
     it('when sender account has some tokens', async () => {
-      expect(await anctoken.balanceOf(owner.address)).to.eq(INITIAL_SUPPLY)
+      expect(await anctoken.balanceOf(owner.getAddress())).to.eq(INITIAL_SUPPLY)
     })
   })
 
