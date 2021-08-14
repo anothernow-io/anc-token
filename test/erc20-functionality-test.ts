@@ -1,10 +1,12 @@
 
 import { ethers } from "hardhat"
 import { expect } from "chai"
-import { Contract, Signer } from 'ethers'
+import { Contract, Signer, BigNumber } from 'ethers'
+
 
 const DECIMALS = 9
 const INITIAL_SUPPLY = ethers.utils.parseUnits('50', 6 + DECIMALS)
+const TRANSFER_AMOUNT = 100
 
 describe("ANCToken:ERC20", () => {
   
@@ -46,12 +48,22 @@ describe("ANCToken:ERC20", () => {
     })
 
     describe('when the sender do have enough balance', () => {
-      it.skip('should emit a Transfer event', async () => {
-
+      it('should emit a Transfer event with proper arguments', async () => {
+        await expect(anctoken.connect(owner).transfer(await addr1.getAddress(), TRANSFER_AMOUNT))
+          .to.emit(anctoken, 'Transfer')
+          .withArgs(
+            await owner.getAddress(),
+            await addr1.getAddress(),
+            TRANSFER_AMOUNT
+          )
       })
 
-      it.skip('should transfer the requested amount', async () => {
-        
+      it('should transfer the requested amount', async () => {
+        const from_balance = await anctoken.balanceOf(await owner.getAddress())
+        const to_balance = await anctoken.balanceOf(await addr1.getAddress())
+        const supply = await anctoken.totalSupply()
+        expect(supply.sub(TRANSFER_AMOUNT)).to.eq(from_balance)
+        expect(to_balance).to.eq(TRANSFER_AMOUNT)
       })
     })
   })
