@@ -1,8 +1,6 @@
-
 import { ethers } from "hardhat"
 import { expect } from "chai"
 import { Contract, Signer, BigNumber } from 'ethers'
-
 
 const DECIMALS = 9
 const INITIAL_SUPPLY = ethers.utils.parseUnits('50', 6 + DECIMALS)
@@ -20,10 +18,6 @@ describe("ANCToken:ERC20", () => {
 
   it("totalSuppy", async () => {
     expect(await anctoken.totalSupply()).to.eq(INITIAL_SUPPLY)
-  })
-
-  it('owner', async () => {
-    expect(await anctoken.owner()).to.eq(await owner.getAddress())
   })
 
   describe('balanceOf', () => {
